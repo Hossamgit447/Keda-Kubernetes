@@ -28,3 +28,10 @@ jobs:
       - name: Build database image
         run: |
           docker build -f database/Dockerfile -t keda-postgres:v1 database
+      - name: Tag database image
+        run: |
+          docker tag keda-postgres:v1 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:v1
+
+      - name: Push database image
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:v1

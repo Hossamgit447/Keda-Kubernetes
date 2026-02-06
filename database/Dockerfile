@@ -5,10 +5,7 @@ FROM postgres:15.4-alpine
 # Build from repository root with: docker build -f database/Dockerfile -t keda-postgres:local .
 COPY init.sql /docker-entrypoint-initdb.d/init.sql
 
-# Ensure readable permissions and create `postgress` user/group
-# We create the user but keep the image's default runtime user (`postgres`) to avoid
-# breaking the official Postgres entrypoint. The init SQL is owned by `postgress`
-# and world-readable so the entrypoint (running as `postgres`) can read it too.
+
 USER root
 RUN chmod 644 /docker-entrypoint-initdb.d/init.sql \
  && addgroup -S postgress || true \
