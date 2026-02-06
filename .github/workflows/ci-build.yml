@@ -27,11 +27,11 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v2
       - name: Build database image
         run: |
-          docker build -f database/Dockerfile -t keda-postgres:v1 database
+          docker build -f database/Dockerfile -t keda-postgres:V1.0 database
       - name: Tag database image
         run: |
-          docker tag keda-postgres:v1 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:v1
+          docker tag keda-postgres:V1.0 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:V1.0
 
       - name: Push database image
         run: |
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:v1
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:V1.0
