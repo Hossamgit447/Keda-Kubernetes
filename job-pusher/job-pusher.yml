@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: job-pusher
+  name: job-pusher
+  namespace: job-processing
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: job-pusher
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: job-pusher
+    spec:
+      volumes: 
+       - name: pusher-py
+         configMap: 
+          name: job-pusher
+      containers:
+      - image: python:3.11-slim
+        name: pusher-script
+        env:
+         - name: HOSTNAME
+           valueFrom:
+            fieldRef:
+             fieldPath: metadata.name
+        command: ["sh","-c"]
+        args: 
+         - |
+          pip install psycopg2-binary
+          python3 -u /tmp/pusher.py
+        volumeMounts: 
+          - name: pusher-py
+            mountPath: /tmp/
+        resources: {}
+status: {}
