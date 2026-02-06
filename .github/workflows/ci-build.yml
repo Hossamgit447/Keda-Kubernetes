@@ -25,3 +25,6 @@ jobs:
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+      - name: Build database image
+        run: |
+          docker build -f database/Dockerfile -t keda-postgres:v1 database
