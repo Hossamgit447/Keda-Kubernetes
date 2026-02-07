@@ -36,3 +36,13 @@ jobs:
       - name: Push database image
         run: |
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:V1.0
+      - name: Build database image
+        run: |
+          docker build -f job-consumer/Dockerfile -t keda-postgres:V1.0 job-consumer
+      - name: Tag job-consumer image
+        run: |
+          docker tag keda-postgres:V1.0 ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:V1.0
+
+      - name: Push job-consumer image
+        run: |
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:V1.0
