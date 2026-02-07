@@ -40,7 +40,8 @@ jobs:
             --cache-from=type=local,src=/tmp/.docker-cache \
             -f database/Dockerfile \
            -t keda-postgres:database-${{ github.sha }} \
-            database \
+            database 
+
             docker save keda-postgres:database-${{ github.sha }} | tar -C /tmp/.docker-cache -xf -
 
       
@@ -57,7 +58,8 @@ jobs:
           --cache-from=type=local,src=/tmp/.docker-cache \
           -f job-consumer/Dockerfile \
           -t keda-postgres:job-consumer-${{ github.sha }} \
-          job-consumer \
+          job-consumer 
+
           docker save keda-postgres:job-consumer-${{ github.sha }} | tar -C /tmp/.docker-cache -xf -
 
 
@@ -74,7 +76,8 @@ jobs:
           --cache-from=type=local,src=/tmp/.docker-cache \
           -f job-pusher/Dockerfile \
           -t keda-postgres:job-pusher-${{ github.sha }} \
-          job-pusher \
+          job-pusher 
+          
           docker save keda-postgres:job-pusher-${{ github.sha }} | tar -C /tmp/.docker-cache -xf -
 
 
