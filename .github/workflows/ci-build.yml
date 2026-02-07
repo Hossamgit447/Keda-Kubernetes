@@ -27,67 +27,35 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-        
-      - name: Cache Docker layers
-        uses: actions/cache@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build and push database image
+        uses: docker/build-push-action@v5
         with:
-          path: /tmp/.docker-cache
-          key: ${{ runner.os }}-docker-layers
+          context: database
+          file: database/Dockerfile
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/keda-postgres:database-${{ github.sha }}
+          cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/keda-postgres:database-buildcache
+          cache-to: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/keda-postgres:database-buildcache,mode=max
 
-      - name: Build database image
-        run: |
-          mkdir -p /tmp/.docker-cache
-          docker build \
-            --cache-from=type=local,src=/tmp/.docker-cache \
-            -f database/Dockerfile \
-           -t keda-postgres:database-${{ github.sha }} \
-            database 
+      - name: Build and push job-consumer image
+        uses: docker/build-push-action@v5
+        with:
+          context: job-consumer
+          file: job-consumer/Dockerfile
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-consumer-${{ github.sha }}
+          cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-consumer-buildcache
+          cache-to: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-consumer-buildcache,mode=max
 
-            docker save keda-postgres:database-${{ github.sha }} | tar -C /tmp/.docker-cache -xf -
-
-      
-      - name: Tag database image
-        run: |
-          docker tag keda-postgres:database-${{ github.sha }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:database-${{ github.sha }}
-
-      - name: Push database image
-        run: |
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:database-${{ github.sha }}
-      - name: Build job-consumer image
-        run: |
-          
-          docker build \
-          --cache-from=type=local,src=/tmp/.docker-cache \
-          -f job-consumer/Dockerfile \
-          -t keda-postgres:job-consumer-${{ github.sha }} \
-          job-consumer 
-
-          docker save keda-postgres:job-consumer-${{ github.sha }} | tar -C /tmp/.docker-cache -xf -
-
-
-      - name: Tag job-consumer image
-        run: |
-          docker tag keda-postgres:job-consumer-${{ github.sha }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:job-consumer-${{ github.sha }}
-
-      - name: Push job-consumer image
-        run: |
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:job-consumer-${{ github.sha }}
-      - name: Build job-pusher image
-        run: |
-          
-          docker build \
-          --cache-from=type=local,src=/tmp/.docker-cache \
-          -f job-pusher/Dockerfile \
-          -t keda-postgres:job-pusher-${{ github.sha }} \
-          job-pusher 
-
-          docker save keda-postgres:job-pusher-${{ github.sha }} | tar -C /tmp/.docker-cache -xf -
-
-
-      - name: Tag job-pusher image
-        run: |
-          docker tag keda-postgres:job-pusher-${{ github.sha }} ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:job-pusher-${{ github.sha }}
-
-      - name: Push job-pusher image
-        run: |
-          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:job-pusher-${{ github.sha }}
+      - name: Build and push job-pusher image
+        uses: docker/build-push-action@v5
+        with:
+          context: job-pusher
+          file: job-pusher/Dockerfile
+          push: true
+          tags: ${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-pusher-${{ github.sha }}
+          cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-pusher-buildcache
+          cache-to: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-pusher-buildcache,mode=max
