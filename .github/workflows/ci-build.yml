@@ -55,7 +55,7 @@ jobs:
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:database-${{ github.sha }}
       - name: Build job-consumer image
         run: |
-          mkdir -p /tmp/.docker-cache
+          
           docker build \
           --cache-from=type=local,src=/tmp/.docker-cache \
           -f job-consumer/Dockerfile \
@@ -74,7 +74,7 @@ jobs:
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com/keda-postgres:job-consumer-${{ github.sha }}
       - name: Build job-pusher image
         run: |
-          mkdir -p /tmp/.docker-cache
+          
           docker build \
           --cache-from=type=local,src=/tmp/.docker-cache \
           -f job-pusher/Dockerfile \
