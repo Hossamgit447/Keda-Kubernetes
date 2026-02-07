@@ -36,9 +36,7 @@ jobs:
           context: database
           file: database/Dockerfile
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/keda-postgres:database-${{ github.sha }}
-          cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/keda-postgres:database-buildcache
-          cache-to: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/keda-postgres:database-buildcache,mode=max
+          tags: ${{ steps.login-ecr.outputs.registry }}/keda-postgres:database-latest
 
       - name: Build and push job-consumer image
         uses: docker/build-push-action@v5
@@ -46,9 +44,7 @@ jobs:
           context: job-consumer
           file: job-consumer/Dockerfile
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-consumer-${{ github.sha }}
-          cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-consumer-buildcache
-          cache-to: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-consumer-buildcache,mode=max
+          tags: ${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-consumer-latest
 
       - name: Build and push job-pusher image
         uses: docker/build-push-action@v5
@@ -56,6 +52,4 @@ jobs:
           context: job-pusher
           file: job-pusher/Dockerfile
           push: true
-          tags: ${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-pusher-${{ github.sha }}
-          cache-from: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-pusher-buildcache
-          cache-to: type=registry,ref=${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-pusher-buildcache,mode=max
+          tags: ${{ steps.login-ecr.outputs.registry }}/keda-postgres:job-pusher-latest
