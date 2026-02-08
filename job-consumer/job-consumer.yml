@@ -16,26 +16,15 @@ spec:
       labels:
         app: job-consumer
     spec:
-      volumes: 
-       - name: consumer-py
-         configMap: 
-          name: job-consumer
+      imagePullSecrets:
+        - name: ecr-secret
       containers:
-      - image: python:3.11-slim
+      - image: 043309368343.dkr.ecr.us-east-1.amazonaws.com/keda-postgres:job-consumer-latest
         name: consumer-script
-        
         env:
          - name: HOSTNAME
            valueFrom:
             fieldRef:
              fieldPath: metadata.name
-        command: ["sh","-c"]
-        args: 
-         - |
-          pip install psycopg2-binary
-          python3 -u /tmp/consumer.py
-        volumeMounts: 
-          - name: consumer-py
-            mountPath: /tmp/
         resources: {}
 status: {}

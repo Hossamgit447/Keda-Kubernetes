@@ -6,7 +6,7 @@ metadata:
   name: job-pusher
   namespace: job-processing
 spec:
-  replicas: 5
+  replicas: 2
   selector:
     matchLabels:
       app: job-pusher
@@ -16,25 +16,15 @@ spec:
       labels:
         app: job-pusher
     spec:
-      volumes: 
-       - name: pusher-py
-         configMap: 
-          name: job-pusher
+      imagePullSecrets:
+        - name: ecr-secret
       containers:
-      - image: python:3.11-slim
+      - image: 043309368343.dkr.ecr.us-east-1.amazonaws.com/keda-postgres:job-pusher-latest
         name: pusher-script
         env:
          - name: HOSTNAME
            valueFrom:
             fieldRef:
              fieldPath: metadata.name
-        command: ["sh","-c"]
-        args: 
-         - |
-          pip install psycopg2-binary
-          python3 -u /tmp/pusher.py
-        volumeMounts: 
-          - name: pusher-py
-            mountPath: /tmp/
         resources: {}
 status: {}
