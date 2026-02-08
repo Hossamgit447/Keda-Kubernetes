@@ -13,7 +13,7 @@ data:
         "password": "jobpass123"
     }
 
-    print("Job Pusher started")
+    print("Jobs Pusher started")
 
     while True:
         try:
